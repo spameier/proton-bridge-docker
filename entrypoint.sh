@@ -34,7 +34,7 @@ if ! [ -d /root/.password-store ]; then
 fi
 
 # login to ProtonMail if neccessary
-if ! [ -f /root/.cache/protonmail/bridge ]; then
+if ! [ -d /root/.cache/protonmail/bridge ]; then
   [ -z "$PM_USER" ] && die '$PM_USER is not set'
   [ -z "$PM_PASS" ] && die '$PM_PASS is not set'
   printf "login\n%s\n%s\n" "${PM_USER}" "${PM_PASS}" | ${BRIDGE}
