@@ -12,15 +12,8 @@ FIFO="/fifo"
 # check if required variables are set
 # FIXME make more compact
 die() { echo "$1"; exit 1; }
-if [ -z "$PM_USER" ]; then
-  die '$PM_USER is not set'
-elif [ -z "$PM_PASS" ]; then
-  die '$PM_PASS is not set'
-elif [ -z "$IMAP_PORT" ]; then
-  die '$IMAP_PORT is not set'
-elif [ -z "$SMTP_PORT" ]; then
-  die '$SMTP_PORT is not set'
-fi
+[ -z "$IMAP_PORT" ] && die '$IMAP_PORT is not set'
+[ -z "$SMTP_PORT" ] && die '$SMTP_PORT is not set'
 
 # initialize gpg if necessary
 if ! [ -d /root/.gnupg ]; then
@@ -42,6 +35,8 @@ fi
 
 # login to ProtonMail if neccessary
 if ! [ -f /root/.cache/protonmail/bridge ]; then
+  [ -z "$PM_USER" ] && die '$PM_USER is not set'
+  [ -z "$PM_PASS" ] && die '$PM_PASS is not set'
   printf "login\n%s\n%s\n" "${PM_USER}" "${PM_PASS}" | ${BRIDGE}
 fi
 
@@ -51,9 +46,7 @@ socat TCP-LISTEN:${SMTP_PORT},fork TCP:127.0.0.1:${BRIDGE_SMTP_PORT} &
 socat TCP-LISTEN:${IMAP_PORT},fork TCP:127.0.0.1:${BRIDGE_IMAP_PORT} &
 
 # display account information, then keep stdin open
-if ! [ -e ${FIFO} ]; then
-  mkfifo ${FIFO}
-fi
+[ -e ${FIFO} ] || mkfifo ${FIFO}
 {
   printf "info\n";
   cat ${FIFO}
