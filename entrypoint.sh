@@ -10,7 +10,6 @@ BRIDGE_SMTP_PORT=1025
 FIFO="/fifo"
 
 # check if required variables are set
-# FIXME make more compact
 die() { echo "$1"; exit 1; }
 [ -z "$IMAP_PORT" ] && die '$IMAP_PORT is not set'
 [ -z "$SMTP_PORT" ] && die '$SMTP_PORT is not set'
